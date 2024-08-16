@@ -20,6 +20,8 @@ namespace ecat_master {
                     MELO_INFO_STREAM("Setting up new EthercatMaster on interface: " << config.networkInterface << " and updating it");
                     auto master = std::make_shared<EthercatMaster>();
                     master->loadEthercatMasterConfiguration(config);
+
+                    ecat_masters_[config.networkInterface] = master;
                     
                     //Spin the master asynchronously
                     spin_threads_.emplace(config.networkInterface, std::make_unique<std::thread>(std::bind(&EthercatMasterSingleton::spin,this, std::placeholders::_1), master));
