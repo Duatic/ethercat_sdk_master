@@ -23,8 +23,7 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 add_definitions(-DMELO_USE_COUT)
 
-## Enable all compiler warnings and treat them as errors.
-add_compile_options(-Wall -Wextra -Wpedantic)
+
 
 set(PACKAGE_DEPENDENCIES ament_cmake soem_interface_rsl message_logger Threads)
 
@@ -42,6 +41,7 @@ add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/EthercatDevice.cpp
   src/${PROJECT_NAME}/EthercatMasterSingleton.cpp
 )
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic  -Wpointer-arith -Wcast-qual  -Wshadow -Wold-style-cast -Wshadow -Wcast-align -Werror=return-type)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
