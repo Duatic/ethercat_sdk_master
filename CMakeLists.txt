@@ -41,7 +41,7 @@ add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/EthercatDevice.cpp
   src/${PROJECT_NAME}/EthercatMasterSingleton.cpp
 )
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic  -Wpointer-arith -Wcast-qual  -Wshadow -Wshadow -Wcast-align -Werror=return-type)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic  -Wpointer-arith -Wcast-qual -Wcast-align -Werror=return-type)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
