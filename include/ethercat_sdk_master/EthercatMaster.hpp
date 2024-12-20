@@ -46,7 +46,7 @@ namespace ecat_master {
  */
 class EthercatMaster {
  public:
-  typedef std::shared_ptr<EthercatMaster> SharedPtr;
+  using SharedPtr = std::shared_ptr<EthercatMaster>;
 
  public:
   EthercatMaster() = default;
@@ -176,6 +176,7 @@ class EthercatMaster {
    * from core to core. Default -1: Dont attach to any core. Has to be < than number of avaible cores
    * @return True if successful
    */
+  [[deprecated("Use ROS realtime_tools package instead")]]
   bool setRealtimePriority(int priority = 99, int cpu_core = -1) const;
 
   /*!
