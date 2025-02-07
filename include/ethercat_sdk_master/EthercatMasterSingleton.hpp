@@ -158,6 +158,7 @@ namespace ecat_master
 
             if (handles_.at(network_interface).reference_count <= 0)
             {
+                MELO_INFO_STREAM("Shutting down EthercatMaster for interface: " << network_interface );
                 // Perform the actual shutdown if all callers have called shutdown on their reference
                 shutdownMaster(handle.ecat_master);
                 return true;
