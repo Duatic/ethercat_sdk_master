@@ -140,12 +140,13 @@ namespace ecat_master
          * @brief releaseMaster - release your handle obtain via aquireMaster
          * This method decrements the internal reference counter for the given EthercatMaster and performs the shutdown if no references are living anymore
          */
-        bool releaseMaster(const std::shared_ptr<EthercatMaster> &master)
+        bool releaseMaster(const Handle &handle)
         {
             // Give it at least some thread safety
             std::lock_guard<std::mutex> guard(lock_);
-
-            const auto &network_interface = master->getConfiguration().networkInterface;
+            
+          
+            const auto &network_interface = handle.ecat_master->getConfiguration().networkInterface;
             // First check if we even handle this ethercat master
             if (!hasMaster(network_interface))
             {
@@ -158,7 +159,7 @@ namespace ecat_master
             if (handles_.at(network_interface).reference_count <= 0)
             {
                 // Perform the actual shutdown if all callers have called shutdown on their reference
-                shutdownMaster(master);
+                shutdownMaster(handle.ecat_master);
                 return true;
             }
 
