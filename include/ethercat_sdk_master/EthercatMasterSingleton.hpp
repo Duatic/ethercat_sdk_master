@@ -11,7 +11,30 @@ namespace ecat_master
      */
     class EthercatMasterSingleton
     {
+    private:
+        // This represents and internal handle which contains all necessary information in order to manage multiple EthercatMasterInstances
+        struct InternalHandle
+        {
+            std::shared_ptr<EthercatMaster> ecat_master;
+            std::unique_ptr<std::thread> spin_thread;
+            std::atomic_bool abort_signal{false};
+            int reference_count{0};
+            std::map<int, bool> handles_ready;
+            int rt_prio{48};
+            InternalHandle(const std::shared_ptr<EthercatMaster> &ecat_master_, std::unique_ptr<std::thread> spin_thread_, int rt_prio_) : ecat_master(ecat_master_), spin_thread(std::move(spin_thread_)), rt_prio(rt_prio_)
+            {
+            }
+            InternalHandle(InternalHandle &&o) : ecat_master(o.ecat_master), spin_thread(std::move(o.spin_thread)), abort_signal(o.abort_signal.load()), reference_count(o.reference_count), handles_ready(o.handles_ready), rt_prio(o.rt_prio) {}
+        };
+
     public:
+        // This represents a public handle which can be used to uniquely identify the result of an aquireMaster operation
+        struct Handle
+        {
+            int id{0};
+            std::shared_ptr<EthercatMaster> ecat_master;
+        };
+
         static EthercatMasterSingleton &instance(); // Method has to be in cpp file in order to work properly
 
         /**
@@ -20,46 +43,97 @@ namespace ecat_master
          * @note Using this methods enforces asynchronous spinning of the master in this class
          * @note In case the "new" ethercat master configuration does not match the existing one only a warning is printed!
          */
-        std::shared_ptr<EthercatMaster> aquireMaster(const EthercatMasterConfiguration &config, int rt_prio = 48)
+        Handle aquireMaster(const EthercatMasterConfiguration &config, int rt_prio = 48)
         {
             // Give it at least some thread safety
             std::lock_guard<std::mutex> guard(lock_);
 
             // Check if we already have a master up and running for the given networkinterface
-            if (ecat_masters_.find(config.networkInterface) == ecat_masters_.end())
+            if (handles_.find(config.networkInterface) == handles_.end())
             {
                 MELO_INFO_STREAM("Setting up new EthercatMaster on interface: " << config.networkInterface << " and updating it");
                 auto master = std::make_shared<EthercatMaster>();
                 master->loadEthercatMasterConfiguration(config);
 
-                ecat_masters_[config.networkInterface] = master;
-                abort_signals_[config.networkInterface] = false;
-                reference_count_[config.networkInterface] = 1;
-                // Spin the master asynchronously
-                spin_threads_.emplace(config.networkInterface, std::make_unique<std::thread>(std::bind(&EthercatMasterSingleton::spin, this, std::placeholders::_1, std::placeholders::_2), master, rt_prio));
-            }
-            else
-            {
-                // In case we already handle the network interface we just increate its reference counter and return the instance
-                reference_count_[config.networkInterface] += 1;
+                handles_.emplace(config.networkInterface, InternalHandle{
+                                                              master, nullptr, rt_prio});
             }
 
-            if (config != ecat_masters_[config.networkInterface]->getConfiguration())
+            // Increment its reference counter
+            handles_.at(config.networkInterface).reference_count += 1;
+            // Mark the new handle as not ready
+            handles_.at(config.networkInterface).handles_ready.emplace(handles_.at(config.networkInterface).reference_count, false);
+            if (config != handles_.at(config.networkInterface).ecat_master->getConfiguration())
             {
                 // Print warning or abort if the configuration does not match!
                 MELO_WARN_STREAM("Ethercat master configurations do not match for bus: " << config.networkInterface);
             }
 
-            return ecat_masters_.at(config.networkInterface);
+            // Create and return a handle in which we use the reference count as an id
+            return Handle{handles_.at(config.networkInterface).reference_count, handles_.at(config.networkInterface).ecat_master};
         }
+        /**
+         * @brief mark a specific handle as ready. If all handles aquired via aquireMaster are ready the bus gets activated and is spun in a separate thread
+         * @return true if the ethercat is now activated
+         */
+        bool markAsReady(const Handle &handle)
+        {
+            // 1. find the corresponding internal handle
+            const auto &network_interface = handle.ecat_master->getConfiguration().networkInterface;
 
+            if (hasMaster(network_interface))
+            {
+                throw std::logic_error("EthercatMaster for interface: " + network_interface + " is not handled by this singleton");
+            }
+
+            auto &internal_handle = handles_.at(network_interface);
+
+            // 2. Check if the handle is already marked as ready
+
+            if (internal_handle.handles_ready.at(handle.id))
+            {
+                throw std::runtime_error("Handle with id: " + std::to_string(handle.id) + " on interface: " + network_interface);
+            }
+
+            // 3. Mark it as ready
+            internal_handle.handles_ready.at(handle.id) = true;
+
+            // 4. Check if all handles are ready
+
+            bool all_ready = true;
+            for (auto &[id, ready] : internal_handle.handles_ready)
+            {
+                if (!ready)
+                {
+                    all_ready = false;
+                    break;
+                }
+            }
+
+            if (!all_ready)
+            {
+                return false;
+            }
+
+            // 5. Perform the startup and spin
+            if (!internal_handle.ecat_master->startup())
+            {
+                throw std::runtime_error("Could not startup ethercat master on interface: " + network_interface);
+            }
+            // Spin the master asynchronously
+            // internal_handle.spin_thread = std::make_unique<std::thread>(std::bind(&EthercatMasterSingleton::spin, this, std::placeholders::_1),network_interface);
+        }
+        /**
+         * @brief check if an ethercat master is active and managed by this implementation for the given configuration
+         * @note only checks the interface name
+         */
         bool hasMaster(const EthercatMasterConfiguration &config)
         {
-            return ecat_masters_.find(config.networkInterface) != ecat_masters_.end();
+            return handles_.find(config.networkInterface) != handles_.end();
         }
         bool hasMaster(const std::string &networkInterface)
         {
-            return ecat_masters_.find(networkInterface) != ecat_masters_.end();
+            return handles_.find(networkInterface) != handles_.end();
         }
 
         /**
@@ -79,9 +153,9 @@ namespace ecat_master
             }
 
             // Decrement the reference counter and check if it is zero
-            reference_count_[network_interface] -= 1;
+            handles_.at(network_interface).reference_count -= 1;
 
-            if (reference_count_[network_interface] <= 0)
+            if (handles_.at(network_interface).reference_count <= 0)
             {
                 // Perform the actual shutdown if all callers have called shutdown on their reference
                 shutdownMaster(master);
@@ -90,6 +164,11 @@ namespace ecat_master
 
             return false;
         }
+        /**
+         * @brief shutdown a given EthercatMaster even though the reference counter is not 0
+         * @note this is really unsafe as other instances using the ethercat master will most likely crash
+         * But ins some cases it is better to properly close the bus than not to crash the control program on the PC
+         */
         void forceShutdownMaster(const std::shared_ptr<EthercatMaster> &master)
         {
 
@@ -109,59 +188,55 @@ namespace ecat_master
             }
 
             // Tell the update thread of the corresponding master to stop spinning
-            abort_signals_[network_interface] = true;
+            handles_.at(network_interface).abort_signal = true;
 
             // Wait for the thread to end
-            spin_threads_[network_interface]->join();
+            handles_.at(network_interface).spin_thread->join();
 
-            // Perform the actuall shutdown
-            ecat_masters_[network_interface]->preShutdown(set_to_safe_op);
-            ecat_masters_[network_interface]->shutdown();
+            // Perform the actual shutdown
+            handles_.at(network_interface).ecat_master->preShutdown(set_to_safe_op);
+            handles_.at(network_interface).ecat_master->shutdown();
 
             // And remove all entries
-            abort_signals_.erase(network_interface);
-            spin_threads_.erase(network_interface);
-            ecat_masters_.erase(network_interface);
-            reference_count_.erase(network_interface);
+            handles_.erase(network_interface);
         }
 
         EthercatMasterSingleton() = default;
         ~EthercatMasterSingleton()
         {
             // Tell every update thread to stop spinning
-            for (auto &[interface, abort_flag] : abort_signals_)
+            for (auto &[interface, handle] : handles_)
             {
-                abort_flag = true;
+                handle.abort_signal = true;
             }
             // Wait for the threads to end
-            for (const auto &[interface, thread] : spin_threads_)
+            for (const auto &[interface, handle] : handles_)
             {
-                thread->join();
+                handle.spin_thread->join();
             }
-            for (const auto &[interfrace, master] : ecat_masters_)
+            for (const auto &[interfrace, handle] : handles_)
             {
-                master->preShutdown();
-                master->shutdown();
+                handle.ecat_master->preShutdown();
+                handle.ecat_master->shutdown();
             }
         }
-        void spin(const std::shared_ptr<EthercatMaster>& master_, int rt_prio)
+        void spin(const std::string &network_interface)
         {
-
+            auto &handle = handles_.at(network_interface);
             // Obtain a reference to the abort floag
-            auto &abort_flag = abort_signals_[master_->getConfiguration().networkInterface];
+            auto &abort_flag = handle.abort_signal;
+
+            auto &master = handle.ecat_master;
             // We override the default rt prio of 99 as this might starve kernel threads.
-            master_->setRealtimePriority(rt_prio);
+            master->setRealtimePriority(handle.rt_prio);
             while (!abort_flag)
             {
-                master_->update(UpdateMode::StandaloneEnforceRate);
+                master->update(UpdateMode::StandaloneEnforceRate);
             }
+            master->deactivate();
         }
 
-        std::map<std::string, std::shared_ptr<EthercatMaster>> ecat_masters_;
-        std::map<std::string, std::unique_ptr<std::thread>> spin_threads_;
-        std::map<std::string, std::atomic_bool> abort_signals_;
-        std::map<std::string, int> reference_count_;
-
+        std::map<std::string, InternalHandle> handles_;
         std::mutex lock_;
     };
 
