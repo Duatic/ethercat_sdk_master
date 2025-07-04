@@ -81,7 +81,7 @@ namespace ecat_master
             // 1. find the corresponding internal handle
             const auto &network_interface = handle.ecat_master->getConfiguration().networkInterface;
 
-            if (hasMaster(network_interface))
+            if (!hasMaster(network_interface))
             {
                 throw std::logic_error("EthercatMaster for interface: " + network_interface + " is not handled by this singleton");
             }
@@ -92,7 +92,7 @@ namespace ecat_master
 
             if (internal_handle.handles_ready.at(handle.id))
             {
-                throw std::runtime_error("Handle with id: " + std::to_string(handle.id) + " on interface: " + network_interface);
+                throw std::runtime_error("Handle with id: " + std::to_string(handle.id) + " on interface: " + network_interface + " was already marked as ready!");
             }
 
             // 3. Mark it as ready
@@ -111,7 +111,8 @@ namespace ecat_master
             }
 
             if (!all_ready)
-            {
+            {   
+                MELO_INFO_STREAM("Not all handles ready - defering start");
                 return false;
             }
 
@@ -120,8 +121,9 @@ namespace ecat_master
             {
                 throw std::runtime_error("Could not startup ethercat master on interface: " + network_interface);
             }
+            MELO_INFO_STREAM("Starting asynchronous worker thread for ethercat master on network interface: "  << network_interface);
             // Spin the master asynchronously
-            // internal_handle.spin_thread = std::make_unique<std::thread>(std::bind(&EthercatMasterSingleton::spin, this, std::placeholders::_1),network_interface);
+            internal_handle.spin_thread = std::make_unique<std::thread>(std::bind(&EthercatMasterSingleton::spin, this, std::placeholders::_1),network_interface);
         }
         /**
          * @brief check if an ethercat master is active and managed by this implementation for the given configuration
