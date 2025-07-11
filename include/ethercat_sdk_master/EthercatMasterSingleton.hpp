@@ -124,6 +124,7 @@ namespace ecat_master
             MELO_INFO_STREAM("Starting asynchronous worker thread for ethercat master on network interface: "  << network_interface);
             // Spin the master asynchronously
             internal_handle.spin_thread = std::make_unique<std::thread>(std::bind(&EthercatMasterSingleton::spin, this, std::placeholders::_1),network_interface);
+            return true;
         }
         /**
          * @brief check if an ethercat master is active and managed by this implementation for the given configuration
