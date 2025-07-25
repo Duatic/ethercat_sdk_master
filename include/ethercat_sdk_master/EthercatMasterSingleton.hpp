@@ -191,6 +191,7 @@ namespace ecat_master
             {
                 throw std::logic_error("EthercatMaster for interface: " + network_interface + " is not handled by this singleton");
             }
+            MELO_INFO_STREAM("Shutting down ethercat master: " << network_interface);
 
             // Tell the update thread of the corresponding master to stop spinning
             handles_.at(network_interface).abort_signal = true;
