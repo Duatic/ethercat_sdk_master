@@ -18,6 +18,7 @@ namespace ecat_master
             std::shared_ptr<EthercatMaster> ecat_master;
             std::unique_ptr<std::thread> spin_thread;
             std::atomic_bool abort_signal{false};
+            std::atomic_bool running{false};
             int reference_count{0};
             std::map<int, bool> handles_ready;
             int rt_prio{48};
@@ -33,6 +34,7 @@ namespace ecat_master
         {
             int id{0};
             std::shared_ptr<EthercatMaster> ecat_master;
+            std::atomic_bool* running{nullptr};
         };
 
         static EthercatMasterSingleton &instance(); // Method has to be in cpp file in order to work properly
@@ -70,7 +72,7 @@ namespace ecat_master
             }
 
             // Create and return a handle in which we use the reference count as an id
-            return Handle{handles_.at(config.networkInterface).reference_count, handles_.at(config.networkInterface).ecat_master};
+            return Handle{handles_.at(config.networkInterface).reference_count, handles_.at(config.networkInterface).ecat_master, &handles_.at(config.networkInterface).running};
         }
         /**
          * @brief mark a specific handle as ready. If all handles aquired via aquireMaster are ready the bus gets activated and is spun in a separate thread
@@ -229,6 +231,7 @@ namespace ecat_master
         void spin(const std::string &network_interface)
         {
             auto &handle = handles_.at(network_interface);
+            handle.running = true;
             // Obtain a reference to the abort floag
             auto &abort_flag = handle.abort_signal;
 
@@ -243,6 +246,7 @@ namespace ecat_master
             {
                 master->update(UpdateMode::StandaloneEnforceRate);
             }
+            handle.running = false;
             master->deactivate();
         }
 
