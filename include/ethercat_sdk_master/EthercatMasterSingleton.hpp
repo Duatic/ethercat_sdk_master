@@ -209,6 +209,8 @@ namespace ecat_master
 
             // And remove all entries
             handles_.erase(network_interface);
+
+            MELO_INFO_STREAM("Shutdown of ethercat master: " << network_interface  << " finished");
         }
 
         EthercatMasterSingleton() = default;
