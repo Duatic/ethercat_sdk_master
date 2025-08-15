@@ -194,7 +194,9 @@ namespace ecat_master
                 throw std::logic_error("EthercatMaster for interface: " + network_interface + " is not handled by this singleton");
             }
             MELO_INFO_STREAM("Shutting down ethercat master: " << network_interface);
-
+            
+            // Perform the actual shutdown
+            handles_.at(network_interface).ecat_master->preShutdown(set_to_safe_op);
             // Tell the update thread of the corresponding master to stop spinning
             handles_.at(network_interface).abort_signal = true;
 
@@ -203,8 +205,7 @@ namespace ecat_master
 
             MELO_INFO_STREAM("Performing the actual shutdown now");
 
-            // Perform the actual shutdown
-            handles_.at(network_interface).ecat_master->preShutdown(set_to_safe_op);
+
             handles_.at(network_interface).ecat_master->shutdown();
 
             // And remove all entries
