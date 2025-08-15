@@ -201,6 +201,8 @@ namespace ecat_master
             // Wait for the thread to end
             handles_.at(network_interface).spin_thread->join();
 
+            MELO_INFO_STREAM("Performing the actual shutdown now");
+
             // Perform the actual shutdown
             handles_.at(network_interface).ecat_master->preShutdown(set_to_safe_op);
             handles_.at(network_interface).ecat_master->shutdown();
