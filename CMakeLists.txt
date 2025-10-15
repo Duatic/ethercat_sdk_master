@@ -36,7 +36,7 @@ find_package(Threads REQUIRED)
 ## Build ##
 ###########
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   src/${PROJECT_NAME}/EthercatMaster.cpp
   src/${PROJECT_NAME}/EthercatDevice.cpp
   src/${PROJECT_NAME}/EthercatMasterSingleton.cpp
