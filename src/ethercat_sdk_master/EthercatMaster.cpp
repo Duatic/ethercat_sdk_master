@@ -112,6 +112,7 @@ bool EthercatMaster::startup(std::atomic<bool>& abortFlag) {
   }
 
   for (const auto& device : devices_) {
+    MELO_INFO_STREAM("Waiting for device: " << device->getName() << " Address: " << device->getAddress());
     if (!bus_->waitForState(soem_interface_rsl::ETHERCAT_SM_STATE::SAFE_OP, device->getAddress(), 50)) {
       MELO_ERROR_STREAM("[EthercatMaster::" << bus_->getName() << "] not in SAFE_OP after startup!");
     }
