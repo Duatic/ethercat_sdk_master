@@ -172,7 +172,9 @@ bool EthercatMaster::activate() {
 
   bus_->setState(soem_interface_rsl::ETHERCAT_SM_STATE::OPERATIONAL);
   success &= bus_->waitForState(soem_interface_rsl::ETHERCAT_SM_STATE::OPERATIONAL, 0, 0);
-
+  if(!success){
+    MELO_WARN_STREAM("Failed to put at least ony device into OPERATIONAL");
+  }
   // will only be used in case internal update timing functionality is used, otherwise no effect.
   firstUpdate_ = true;
   return success;
