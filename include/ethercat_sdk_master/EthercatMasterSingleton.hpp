@@ -242,7 +242,9 @@ namespace ecat_master
 
             auto &master = handle.ecat_master;
             // We override the default rt prio of 99 as this might starve kernel threads.
-            master->setRealtimePriority(handle.rt_prio);
+            if(!master->setRealtimePriority(handle.rt_prio)) {
+                MELO_WARN_STREAM("Failed to set RT priority");
+            }
 
             if (master->activate()) {
                 MELO_INFO_STREAM("Activated the Bus: " << master->getBusPtr()->getName());
