@@ -13,6 +13,7 @@ namespace ecat_master
     {
     public:
         using StartupFinishedCb = std::function<void(void)>;
+
     private:
         // This represents and internal handle which contains all necessary information in order to manage multiple EthercatMasterInstances
         struct InternalHandle
@@ -23,11 +24,11 @@ namespace ecat_master
             std::atomic_bool running{false};
             int reference_count{0};
             std::map<int, bool> handles_ready;
-           StartupFinishedCb startup_finished_callback{nullptr};
-            InternalHandle(const std::shared_ptr<EthercatMaster> &ecat_master_, std::unique_ptr<std::thread> spin_thread_, StartupFinishedCb cb_startup_finished_) : ecat_master(ecat_master_), spin_thread(std::move(spin_thread_)), startup_finished_callback(cb_startup_finished_)
+            std::vector<StartupFinishedCb> startup_finished_callbacks{nullptr};
+            InternalHandle(const std::shared_ptr<EthercatMaster> &ecat_master_, std::unique_ptr<std::thread> spin_thread_, StartupFinishedCb cb_startup_finished_) : ecat_master(ecat_master_), spin_thread(std::move(spin_thread_)), startup_finished_callbacks({cb_startup_finished_})
             {
             }
-            InternalHandle(InternalHandle &&o) : ecat_master(o.ecat_master), spin_thread(std::move(o.spin_thread)), abort_signal(o.abort_signal.load()), reference_count(o.reference_count), handles_ready(o.handles_ready), startup_finished_callback(o.startup_finished_callback) {}
+            InternalHandle(InternalHandle &&o) : ecat_master(o.ecat_master), spin_thread(std::move(o.spin_thread)), abort_signal(o.abort_signal.load()), reference_count(o.reference_count), handles_ready(o.handles_ready), startup_finished_callbacks(o.startup_finished_callbacks) {}
         };
 
     public:
@@ -67,6 +68,7 @@ namespace ecat_master
             handles_.at(config.networkInterface).reference_count += 1;
             // Mark the new handle as not ready
             handles_.at(config.networkInterface).handles_ready.emplace(handles_.at(config.networkInterface).reference_count, false);
+            handles_.at(config.networkInterface).startup_finished_callbacks.push_back(cb_startup_finished);
             if (config != handles_.at(config.networkInterface).ecat_master->getConfiguration())
             {
                 // Print warning or abort if the configuration does not match!
@@ -125,8 +127,12 @@ namespace ecat_master
             }
 
             // 6. Call callback to allow clients to perform any work before going into PDO communication which is timing sensitive
-            if(internal_handle.startup_finished_callback){
-                internal_handle.startup_finished_callback();
+            for (auto &cb : internal_handle.startup_finished_callbacks)
+            {
+                if (cb)
+                {
+                    cb();
+                }
             }
 
             MELO_INFO_STREAM("Starting asynchronous worker thread for ethercat master on network interface: " << network_interface);
