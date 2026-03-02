@@ -173,6 +173,7 @@ bool EthercatMaster::activate() {
   for(int i= 0; i <200;i++){
     bus_->updateWrite();
     bus_->updateRead();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   for(auto & device: devices_){
