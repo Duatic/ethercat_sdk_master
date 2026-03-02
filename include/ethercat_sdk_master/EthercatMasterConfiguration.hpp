@@ -79,6 +79,11 @@ struct EthercatMasterConfiguration{
    */
   bool logErrorCounters{false};
 
+
+  /**
+   * Scheduler priority of the update thread
+   */
+  int rtPrio{48};
   /*!
    * Comparison operator
   */
