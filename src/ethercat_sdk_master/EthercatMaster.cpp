@@ -170,6 +170,10 @@ bool EthercatMaster::startup() {
 bool EthercatMaster::activate() {
   bool success = true;
 
+  for(int i= 0; i <200;i++){
+    bus_->updateWrite();
+    bus_->updateRead();
+  }
 
   for(auto & device: devices_){
     bus_->setState(soem_interface_rsl::ETHERCAT_SM_STATE::OPERATIONAL, device->getAddress());
