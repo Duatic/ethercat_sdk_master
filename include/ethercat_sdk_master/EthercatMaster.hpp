@@ -179,16 +179,6 @@ class EthercatMaster {
   [[deprecated("Use ROS realtime_tools package instead")]]
   bool setRealtimePriority(int priority = 99, int cpu_core = -1) const;
 
-  /*!
-   * Resets the update rate scheduler (heartbeat reset).
-   * Call this RIGHT BEFORE restarting PDO communication after an
-   * interruption, i.e. right before the newly first call to update().
-   * The calling thread shall be the same running the update loop.
-   * @note Does not have to be called on the FIRST startup of the communication
-   * (if update() is not called outsied of the update loop before, which it
-   * shouldn't be anyway).
-   */
-  void resetUpdateScheduler() { firstUpdate_ = true; }
 
  protected:
   std::unique_ptr<soem_interface_rsl::EthercatBusBase> bus_{nullptr};
@@ -211,7 +201,6 @@ class EthercatMaster {
   std::chrono::time_point<std::chrono::system_clock> logStartTime_;
   soem_interface_rsl::BusDiagnosisLog busDiagnosisLog_{};
 
-  bool firstUpdate_{true};
 
  protected:
   bool deviceExists(const std::string& name);
