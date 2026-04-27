@@ -51,7 +51,7 @@ struct EthercatMasterConfiguration{
   /*!checks if the pdo size read from the slaves, matches the hardcoded one in the slave sdks.
    * if dynamic PDO mapping is used this check will fail and can therefore be disabled. e.g. Maxon
    */
-  bool pdoSizeCheck{false};
+  bool pdoSizeCheck{true};
 
   /*!max retires during slave discover on the bus (waiting 1 sec after every try). some slaves might take a bit till started..
    *can be interrupted if startupAbortFlag is nicley wired thru everything.
