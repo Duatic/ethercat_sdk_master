@@ -1,0 +1,13 @@
+repositories:
+  duatic_message_logger:
+    type: git
+    url: https://github.com/Duatic/duatic_message_logger.git
+    version: main
+  soem_vendor:
+    type: git
+    url: https://github.com/Duatic/soem_vendor.git
+    version: main
+  soem_interface:
+    type: git
+    url: https://github.com/Duatic/soem_interface.git
+    version: master
