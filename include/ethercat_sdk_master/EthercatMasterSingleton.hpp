@@ -63,12 +63,16 @@ namespace ecat_master
                 handles_.emplace(config.networkInterface, InternalHandle{
                                                               master, nullptr, cb_startup_finished});
             }
+            else
+            {
+                handles_.at(config.networkInterface).startup_finished_callbacks.push_back(cb_startup_finished);
+            }
 
             // Increment its reference counter
             handles_.at(config.networkInterface).reference_count += 1;
             // Mark the new handle as not ready
             handles_.at(config.networkInterface).handles_ready.emplace(handles_.at(config.networkInterface).reference_count, false);
-            handles_.at(config.networkInterface).startup_finished_callbacks.push_back(cb_startup_finished);
+
             if (config != handles_.at(config.networkInterface).ecat_master->getConfiguration())
             {
                 // Print warning or abort if the configuration does not match!
