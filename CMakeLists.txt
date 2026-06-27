@@ -48,25 +48,25 @@ if(COMMAND ament_target_dependencies)
     ament_target_dependencies(${PROJECT_NAME} message_logger soem_interface_rsl)
 else()
     target_link_libraries(${PROJECT_NAME}
-    message_logger::message_logger
-    soem_interface_rsl::soem_interface_rsl)
+      message_logger::message_logger
+      soem_interface_rsl::soem_interface_rsl)
 endif()
 
 
 ament_export_dependencies(message_logger soem_interface_rsl)
 ament_export_libraries(${PROJECT_NAME})
 ament_export_include_directories(include)
+ament_export_targets(export_${PROJECT_NAME})
 
 #############
 ## Install ##
 #############
 install(
   TARGETS ${PROJECT_NAME}
-  EXPORT ${PROJECT_NAME}Target
+  EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
 )
 
 install(
