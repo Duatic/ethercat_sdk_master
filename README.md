@@ -1,10 +1,10 @@
 # ethercat_sdk_master
 
-[![Rolling](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-rolling.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-rolling.yml)
-[![Lyrical](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-lyrical.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-lyrical.yml)
-[![Kilted](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-kilted.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-kilted.yml)
-[![Jazzy](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-jazzy.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-jazzy.yml)
 [![Humble](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-humble.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-humble.yml)
+[![Jazzy](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-jazzy.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-jazzy.yml)
+[![Kilted](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-kilted.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-kilted.yml)
+[![Lyrical](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-lyrical.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-lyrical.yml)
+[![Rolling](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-rolling.yml/badge.svg)](https://github.com/Duatic/ethercat_sdk_master/actions/workflows/build-rolling.yml)
 
 __NOTE:__ This is a fork of the original [repository](https://github.com/leggedrobotics/ethercat_sdk_master) maintained by [Duatic](https://duatic.com)
 
