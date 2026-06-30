@@ -1,4 +1,4 @@
-name: Rolling Build Main
+name: Rolling
 on:
   workflow_dispatch:
   pull_request:
