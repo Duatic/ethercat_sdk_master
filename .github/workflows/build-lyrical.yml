@@ -1,4 +1,4 @@
-name: Lyrical Build Master
+name: Lyrical
 on:
   workflow_dispatch:
   pull_request:

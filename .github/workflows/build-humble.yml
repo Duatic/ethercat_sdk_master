@@ -1,4 +1,4 @@
-name: Humble Build Main
+name: Humble
 on:
   workflow_dispatch:
   pull_request:
