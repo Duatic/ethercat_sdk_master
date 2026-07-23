@@ -109,7 +109,11 @@ namespace ecat_master
       MELO_ERROR_STREAM("Cannot attach device with name '" << device->getName() << "' because it already exists.");
       return false;
     }
-    bus_->addSlave(device);
+    if (!bus_->addSlave(device))
+    {
+      MELO_ERROR_STREAM("Cannot attach device '" << device->getName() << "' at address " << device->getAddress());
+      return false;
+    }
     device->setEthercatBusBasePointer(bus_.get());
     device->setTimeStep(configuration_.timeStep);
     devices_.push_back(device);
