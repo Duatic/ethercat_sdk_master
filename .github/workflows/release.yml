@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to release, by its package.xml name'
+        type: choice
+        options:
+          - ethercat_sdk_master
+      bump:
+        description: 'Override the bump derived from the commits'
+        type: choice
+        options: [derived, major, minor, patch]
+        default: derived
+  pull_request:
+    types: [closed]
+
+jobs:
+  prepare:
+    if: github.event_name == 'workflow_dispatch'
+    uses: Duatic/ci-workflows/.github/workflows/reusable_prepare_release.yml@v1
+    with:
+      package: ${{ inputs.package }}
+      bump: ${{ inputs.bump }}
+      runner: ubuntu-latest
+    secrets: inherit
+
+  tag:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged
+    permissions:
+      contents: write
+    uses: Duatic/ci-workflows/.github/workflows/reusable_release_tag.yml@v1
+    with:
+      runner: ubuntu-latest
