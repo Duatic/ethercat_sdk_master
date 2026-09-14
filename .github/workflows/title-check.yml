@@ -1,0 +1,14 @@
+name: Title check
+
+on:
+  pull_request:
+
+jobs:
+  title:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Duatic/ci-workflows/actions/title-check@v1
