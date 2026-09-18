@@ -13,10 +13,10 @@ An example how this package can be found in the 'elmo_ethercat_sdk'
 
 # Dependencies
 
-## RSL packages
+This list lists all non system or default ROS2 dependencies. For a full list see the [package.xml](./package.xml)
 
 | Repo           | url                                                  | License      | Content                                          |
 |:--------------:|:----------------------------------------------------:|:------------:|:------------------------------------------------:|
 | soem_interface_rsl |hhttps://github.com/Duatic/soem_interface/ | GPLv3        | EtherCAT functionalities                         |
-| message_logger | https://github.com/leggedrobotics/message_logger.git | BSD 3-Clause | simple log streams                               |
+| duatic_message_logger | https://github.com/Duatic/duatic_message_logger | BSD 3-Clause | simple logging wrapper around ROS2 or cout |
 
