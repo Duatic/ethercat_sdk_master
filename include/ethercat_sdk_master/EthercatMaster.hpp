@@ -173,7 +173,7 @@ class EthercatMaster {
    * @param[in] priority Prioirity of the calling thread.
    * Default: 99, Range on most systems: 1 - 99
    * @param[in] cpu_core. Allows locking the thread to a certain cpu core to avoid the thread hopping
-   * from core to core. Default -1: Dont attach to any core. Has to be < than number of avaible cores
+   * from core to core. Default -1: Dont attach to any core. Has to be < than number of available cores
    * @return True if successful
    */
   [[deprecated("Use ROS realtime_tools package instead")]]

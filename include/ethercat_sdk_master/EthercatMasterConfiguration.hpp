@@ -88,8 +88,8 @@ struct EthercatMasterConfiguration{
    * Comparison operator
   */
   bool operator==(const EthercatMasterConfiguration& o) const{
-    return o.name == name && o.networkInterface == networkInterface && 
-                  o.timeStep == timeStep && o.pdoSizeCheck == pdoSizeCheck && 
+    return o.name == name && o.networkInterface == networkInterface &&
+                  o.timeStep == timeStep && o.pdoSizeCheck == pdoSizeCheck &&
                   o.slaveDiscoverRetries == slaveDiscoverRetries && o.updateRateTooLowWarnThreshold == updateRateTooLowWarnThreshold &&
                   o.rateCompensationCoefficient == rateCompensationCoefficient &&
                   o.doBusDiagnosis == doBusDiagnosis &&
