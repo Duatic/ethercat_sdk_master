@@ -12,8 +12,9 @@ on:
   push:
     branches: [master]
   schedule:
-    # Run every morning to detect flakiness and broken dependencies
+    # Run every morning at 01:00 to detect flakiness and broken dependencies
     - cron: '0 1 * * *'
+      timezone: "Europe/Zurich"
 
 jobs:
   ci:
