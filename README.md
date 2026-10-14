@@ -8,7 +8,7 @@
 
 __NOTE:__ This is a fork of the original [repository](https://github.com/leggedrobotics/ethercat_sdk_master) maintained by [Duatic](https://duatic.com)
 
-The 'ethercat_sdk_master' is a common master implementation that can be used to interface multiple ethercat slaves on the same bus. 
+The 'ethercat_sdk_master' is a common master implementation that can be used to interface multiple ethercat slaves on the same bus.
 An example how this package can be found in the 'elmo_ethercat_sdk'
 
 # Dependencies
@@ -17,6 +17,5 @@ This list lists all non system or default ROS2 dependencies. For a full list see
 
 | Repo           | url                                                  | License      | Content                                          |
 |:--------------:|:----------------------------------------------------:|:------------:|:------------------------------------------------:|
-| soem_interface_rsl |hhttps://github.com/Duatic/soem_interface/ | GPLv3        | EtherCAT functionalities                         |
+| soem_interface_rsl |https://github.com/Duatic/soem_interface/ | GPLv3        | EtherCAT functionalities                         |
 | duatic_message_logger | https://github.com/Duatic/duatic_message_logger | BSD 3-Clause | simple logging wrapper around ROS2 or cout |
-

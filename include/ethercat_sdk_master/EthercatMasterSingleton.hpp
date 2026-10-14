@@ -83,7 +83,7 @@ namespace ecat_master
             return Handle{handles_.at(config.networkInterface).reference_count, handles_.at(config.networkInterface).ecat_master, &handles_.at(config.networkInterface).running};
         }
         /**
-         * @brief mark a specific handle as ready. If all handles aquired via aquireMaster are ready the bus gets activated and is spun in a separate thread
+         * @brief mark a specific handle as ready. If all handles acquired via aquireMaster are ready the bus gets activated and is spun in a separate thread
          * @return true if the ethercat is now activated
          */
         bool markAsReady(const Handle &handle)
@@ -120,7 +120,7 @@ namespace ecat_master
 
             if (!all_ready)
             {
-                MELO_INFO_STREAM("Not all handles ready - defering start");
+                MELO_INFO_STREAM("Not all handles ready - deferring start");
                 return false;
             }
 
