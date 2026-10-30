@@ -1,0 +1,20 @@
+name: Edge
+
+on:
+  push:
+    branches: [master]
+
+concurrency:
+  group: edge-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  edge:
+    permissions:
+      contents: read
+      actions: read
+    uses: Duatic/ci-workflows/.github/workflows/reusable_edge_build.yml@v1
+    with:
+      ros_distros: '["humble", "jazzy", "kilted", "lyrical", "rolling"]'
+      runner: ubuntu-latest
+    secrets: inherit
