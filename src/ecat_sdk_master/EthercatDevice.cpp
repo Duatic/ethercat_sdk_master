@@ -14,7 +14,7 @@
  */
 
 
-#include "ethercat_sdk_master/EthercatDevice.hpp"
+#include "ecat_sdk_master/EthercatDevice.hpp"
 
 #include <iostream>
 

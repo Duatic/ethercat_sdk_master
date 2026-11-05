@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "ethercat_sdk_master/EthercatDevice.hpp"
-#include "ethercat_sdk_master/EthercatMasterConfiguration.hpp"
-#include "ethercat_sdk_master/UpdateMode.hpp"
+#include "ecat_sdk_master/EthercatDevice.hpp"
+#include "ecat_sdk_master/EthercatMasterConfiguration.hpp"
+#include "ecat_sdk_master/UpdateMode.hpp"
 
 #include <soem_interface_rsl/EthercatBusBase.hpp>
 

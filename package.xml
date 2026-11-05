@@ -14,11 +14,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 <-->
 
 <package format="2">
-  <name>ethercat_sdk_master</name>
+  <name>ecat_sdk_master</name>
   <version>0.0.1</version>
   <description>Generic EtherCAT Master for CoE Drives</description>
 
-  <license>BSDv3</license>
+  <license>BSD-3-Clause</license>
   <author email="jungerj@student.ethz.ch">Jonas Junger</author>
   <author email="nachtigall@mavt.ethz.ch">Lennart Nachtigall</author>
   <maintainer email="jungerj@student.ethz.ch">Jonas Junger</maintainer>
@@ -31,5 +31,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   <depend>message_logger</depend>
   <export>
     <build_type>ament_cmake</build_type>
+    <duatic_archive_root>public</duatic_archive_root>
   </export>
 </package>
