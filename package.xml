@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 <package format="2">
   <name>ecat_sdk_master</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>Generic EtherCAT Master for CoE Drives</description>
 
   <license>BSD-3-Clause</license>
