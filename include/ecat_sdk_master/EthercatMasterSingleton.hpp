@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ethercat_sdk_master/EthercatMaster.hpp>
+#include <ecat_sdk_master/EthercatMaster.hpp>
 #include <map>
 
 namespace ecat_master

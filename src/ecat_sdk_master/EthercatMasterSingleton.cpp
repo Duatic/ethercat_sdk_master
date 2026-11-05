@@ -1,4 +1,4 @@
-#include "ethercat_sdk_master/EthercatMasterSingleton.hpp"
+#include "ecat_sdk_master/EthercatMasterSingleton.hpp"
 
 namespace ecat_master {
     EthercatMasterSingleton&  EthercatMasterSingleton::instance() {

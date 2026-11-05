@@ -20,7 +20,7 @@
  *USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ethercat_sdk_master/EthercatMaster.hpp"
+#include "ecat_sdk_master/EthercatMaster.hpp"
 #include <pthread.h>
 #include <cmath>
 #include <cstdint>
@@ -192,7 +192,7 @@ namespace ecat_master
     }
 
     if (!success)
-      MELO_ERROR("[ethercat_sdk_master:EthercatMaster::startup] Startup not successful.");
+      MELO_ERROR("[ecat_sdk_master:EthercatMaster::startup] Startup not successful.");
     return success;
   }
 
@@ -375,7 +375,7 @@ namespace ecat_master
     int errorFlag = pthread_setschedparam(thread, SCHED_FIFO, &param);
     if (errorFlag != 0)
     {
-      MELO_ERROR_STREAM("[ethercat_sdk_master:EthercatMaster::setRealtimePriority]"
+      MELO_ERROR_STREAM("[ecat_sdk_master:EthercatMaster::setRealtimePriority]"
                         << " Could not set thread priority. Check limits.conf or"
                         << " execute as root");
       success &= false;
@@ -394,7 +394,7 @@ namespace ecat_master
       // check if the core is < than the number of available cpus
       if (cpu_core >= number_of_cpus)
       {
-        MELO_ERROR_STREAM("[ethercat_sdk_master:EthercatMaster::setRealtimePriority]"
+        MELO_ERROR_STREAM("[ecat_sdk_master:EthercatMaster::setRealtimePriority]"
                           << "Tried to attach thread to core: " << cpu_core << " even though we only have: " << number_of_cpus << " core!");
         return false;
       }
@@ -404,7 +404,7 @@ namespace ecat_master
       errorFlag = pthread_setaffinity_np(thread, sizeof(cpuset), &cpuset);
       if (errorFlag != 0)
       {
-        MELO_ERROR_STREAM("[ethercat_sdk_master:EthercatMaster::setRealtimePriority]"
+        MELO_ERROR_STREAM("[ecat_sdk_master:EthercatMaster::setRealtimePriority]"
                           << "Could not assign ethercat thread to single cpu core: " << errorFlag);
         success &= false;
       }
@@ -503,7 +503,7 @@ namespace ecat_master
       if (rateTooLowCounter_ >= configuration_.updateRateTooLowWarnThreshold)
       {
         MELO_DEBUG_STREAM(
-            "[ethercat_sdk_master:EthercatMaster::createUpdateHeartbeat]: update rate too low, accumulated delay: " << accumulatedDelayNs_);
+            "[ecat_sdk_master:EthercatMaster::createUpdateHeartbeat]: update rate too low, accumulated delay: " << accumulatedDelayNs_);
       }
     }
     else

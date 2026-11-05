@@ -7,7 +7,7 @@ on:
         description: 'Package to release, by its package.xml name'
         type: choice
         options:
-          - ethercat_sdk_master
+          - ecat_sdk_master
       bump:
         description: 'Override the bump derived from the commits'
         type: choice
