@@ -11,4 +11,4 @@ jobs:
       pull-requests: read
     steps:
       - uses: actions/checkout@v7
-      - uses: Duatic/ci-workflows/actions/title-check@v1
+      - uses: Duatic/ci-workflows/actions/title-check@v2

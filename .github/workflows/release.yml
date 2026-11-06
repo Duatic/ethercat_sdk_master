@@ -19,7 +19,7 @@ on:
 jobs:
   prepare:
     if: github.event_name == 'workflow_dispatch'
-    uses: Duatic/ci-workflows/.github/workflows/reusable_prepare_release.yml@v1
+    uses: Duatic/ci-workflows/.github/workflows/reusable_prepare_release.yml@v2
     with:
       package: ${{ inputs.package }}
       bump: ${{ inputs.bump }}
@@ -30,7 +30,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.merged
     permissions:
       contents: write
-    uses: Duatic/ci-workflows/.github/workflows/reusable_release_tag.yml@v1
+    uses: Duatic/ci-workflows/.github/workflows/reusable_release_tag.yml@v2
     with:
       runner: ubuntu-latest
       ros_distros: '["humble", "jazzy", "kilted", "lyrical", "rolling"]'
