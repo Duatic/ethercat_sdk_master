@@ -1,0 +1,27 @@
+name: Nightly image
+
+on:
+  schedule:
+    - cron: '30 0 * * *'
+      timezone: "Europe/Zurich"
+  workflow_dispatch:
+    inputs:
+      ros_distro:
+        description: "Distro to test and build, e.g. 'jazzy'. Empty runs every distro."
+        default: ""
+      publish:
+        description: "Push the images to ghcr.io"
+        type: boolean
+        default: false
+
+jobs:
+  image:
+    permissions:
+      contents: write   # badges and image-badges branches
+      packages: write
+    uses: Duatic/ci-workflows/.github/workflows/reusable_nightly_orchestrator.yml@v2
+    with:
+      ros_distro: ${{ inputs.ros_distro }}
+      publish: ${{ github.event_name == 'schedule' || inputs.publish }}
+      extra_distros: humble
+    secrets: inherit

@@ -11,19 +11,15 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [master]
-  schedule:
-    # Run every morning at 01:00 to detect flakiness and broken dependencies
-    - cron: '0 1 * * *'
-      timezone: "Europe/Zurich"
 
 jobs:
   ci:
     permissions:
       contents: write
-    uses: Duatic/ci-workflows/.github/workflows/ci_orchestrator.yml@v1
+      packages: write
+    uses: Duatic/ci-workflows/.github/workflows/ci_orchestrator.yml@v2
     with:
       ros_distro: ${{ inputs.ros_distro }}
       extra_distros: humble
-      badge_branch: true
       devtools_ref: v1
     secrets: inherit
