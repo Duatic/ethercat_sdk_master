@@ -11,6 +11,9 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [master]
+  schedule:
+    - cron: '30 0 * * *'
+      timezone: "Europe/Zurich"
 
 jobs:
   ci:
@@ -20,6 +23,7 @@ jobs:
     uses: Duatic/ci-workflows/.github/workflows/ci_orchestrator.yml@v2
     with:
       ros_distro: ${{ inputs.ros_distro }}
+      gated: ${{ github.event_name != 'schedule' }}
       extra_distros: humble
       devtools_ref: v1
     secrets: inherit
